@@ -14,30 +14,35 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // ✅ First, get the session safely
   useEffect(() => {
     let isMounted = true;
 
-    // Initial session fetch
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const init = async () => {
+      const { data, error } = await supabase.auth.getSession();
       if (isMounted) {
-        setSession(session);
+        setSession(data?.session ?? null);
         setLoading(false);
       }
-    });
+    };
 
-    // Auth state listener
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (isMounted) setSession(session);
+    init();
+
+    // ✅ Auth state listener (do NOT navigate here!)
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (isMounted) {
+        setSession(session);
+      }
     });
 
     return () => {
       isMounted = false;
-      listener?.subscription.unsubscribe();
+      authListener?.subscription.unsubscribe();
     };
   }, []);
 
+  // ✅ Redirect logic: safely in useEffect based on session & path
   useEffect(() => {
-    // Only run redirect after session is set
     if (session && (location.pathname === '/' || location.pathname === '')) {
       navigate('/home', { replace: true });
     }
@@ -49,7 +54,6 @@ export default function App() {
     <>
       {session ? (
         <Routes>
-          {/* Optional: Add this to always redirect "/" to "/home" */}
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<MatrimonyApp />} />
           <Route path="/about" element={<TestimonialsSection />} />
