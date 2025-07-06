@@ -1,4 +1,4 @@
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import MatrimonyApp from './components/initialpage';
 import TestimonialsSection from './components/testimonial';
 import './index.css';
@@ -15,28 +15,33 @@ export default function App() {
   const location = useLocation();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
+    let isMounted = true;
 
-      // ✅ redirect to /home if on root or unknown path
-      if (session && (location.pathname === '/' || location.pathname === '')) {
-        navigate('/home', { replace: true });
+    // Initial session fetch
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (isMounted) {
+        setSession(session);
+        setLoading(false);
       }
     });
 
+    // Auth state listener
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-
-      if (session && (location.pathname === '/' || location.pathname === '')) {
-        navigate('/home', { replace: true });
-      }
+      if (isMounted) setSession(session);
     });
 
     return () => {
+      isMounted = false;
       listener?.subscription.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    // Only run redirect after session is set
+    if (session && (location.pathname === '/' || location.pathname === '')) {
+      navigate('/home', { replace: true });
+    }
+  }, [session, location.pathname, navigate]);
 
   if (loading) return <div>Loading...</div>;
 
@@ -44,6 +49,8 @@ export default function App() {
     <>
       {session ? (
         <Routes>
+          {/* Optional: Add this to always redirect "/" to "/home" */}
+          <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<MatrimonyApp />} />
           <Route path="/about" element={<TestimonialsSection />} />
           <Route path="/profiles" element={<ProfileList />} />
