@@ -1,25 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+// App.js ✅
+import { Routes, Route } from 'react-router-dom';
+import MatrimonyApp from './components/initialpage';
+import TestimonialsSection from './components/testimonial';
+import './index.css';
+import NotFound from './notFound';
+import ProfileList from './components/profilelist';
+import { useEffect, useState } from 'react';
+import { supabase } from './supabaseClient';
+import Auth from './Authentication/Auth.jsx';
 
-function App() {
+
+export default function App() {
+  const [session, setSession] = useState(null);
+  console.log(session, "session")
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("Initial session:", session);
+      setSession(session);
+      setLoading(false);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => listener?.subscription.unsubscribe();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {session ? (
+        <Routes>
+          <Route path="/" element={<MatrimonyApp />} />
+          <Route path="/about" element={<TestimonialsSection />} />
+          <Route path="/profiles" element={<ProfileList />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      ) : (
+        <Auth />
+      )}
+    </>
+
+
   );
 }
-
-export default App;
