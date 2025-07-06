@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/matrimony-app/static/css/main.fab6e99d.css",
-    "main.js": "/matrimony-app/static/js/main.8fa1312f.js",
+    "main.js": "/matrimony-app/static/js/main.a3626236.js",
     "index.html": "/matrimony-app/index.html",
     "main.fab6e99d.css.map": "/matrimony-app/static/css/main.fab6e99d.css.map",
-    "main.8fa1312f.js.map": "/matrimony-app/static/js/main.8fa1312f.js.map"
+    "main.a3626236.js.map": "/matrimony-app/static/js/main.a3626236.js.map"
   },
   "entrypoints": [
     "static/css/main.fab6e99d.css",
-    "static/js/main.8fa1312f.js"
+    "static/js/main.a3626236.js"
   ]
 }
