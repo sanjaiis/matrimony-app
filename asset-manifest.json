@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/sanjaiis/matrimony-app.git/static/css/main.fab6e99d.css",
+    "main.js": "/sanjaiis/matrimony-app.git/static/js/main.78c3b1bc.js",
+    "index.html": "/sanjaiis/matrimony-app.git/index.html",
+    "main.fab6e99d.css.map": "/sanjaiis/matrimony-app.git/static/css/main.fab6e99d.css.map",
+    "main.78c3b1bc.js.map": "/sanjaiis/matrimony-app.git/static/js/main.78c3b1bc.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.fab6e99d.css",
+    "static/js/main.78c3b1bc.js"
+  ]
+}
